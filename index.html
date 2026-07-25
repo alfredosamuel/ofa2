@@ -2294,8 +2294,16 @@ function runBacktest() {
   const rrTarget = parseFloat(document.getElementById('btRR').value) || 2.0;
 
   let candles = inst.lastCandles;
-  if (candleLimit > 0 && candleLimit < candles.length) {
-    candles = candles.slice(-candleLimit);
+  if (candleLimit === 0) {
+    const visibleRange = inst.chart.timeScale().getVisibleRange();
+    if (visibleRange && visibleRange.from && visibleRange.to) {
+      candles = inst.lastCandles.filter(c => c.time >= visibleRange.from && c.time <= visibleRange.to);
+    }
+    if (candles.length < 60) candles = inst.lastCandles;
+  } else {
+    if (candleLimit > 0 && candleLimit < candles.length) {
+      candles = candles.slice(-candleLimit);
+    }
   }
   inst.backtestTrades = [];
   const useVwapBands = globalState.btFilters.vwapBands;
