@@ -185,7 +185,8 @@
   .bt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
   .bt-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:block;}
   .bt-list{display:flex;flex-direction:column;gap:4px;margin-top:4px;}
-  .bt-row{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;background:var(--panel-2);border:1px solid var(--border);border-radius:5px;}
+  .bt-list.bt-grid-filters{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+  .bt-row{display:flex;align-items:center;justify-content:space-between;padding:5px 7px;background:var(--panel-2);border:1px solid var(--border);border-radius:5px;}
   .bt-row-info{display:flex;flex-direction:column;gap:1px;}
   .bt-row-name{font-size:10px;font-weight:700;}
   .bt-row-desc{font-size:8px;color:var(--muted);}
@@ -623,8 +624,17 @@
           </div>
 
           <div style="margin-top:12px;">
-            <span class="bt-label">Indicadores y filtros a usar</span>
-            <div class="bt-list" id="btFilterList">
+            <div>
+              <span class="bt-label">Sesiones — filtrar por sesión de trading</span>
+              <div class="opt-btn-group" id="btSessionGroup" style="flex-wrap:wrap;gap:2px;">
+                <button type="button" class="opt-btn active" data-bt-session="all">Todas</button>
+                <button type="button" class="opt-btn" data-bt-session="asia">Asia</button>
+                <button type="button" class="opt-btn" data-bt-session="london">Londres</button>
+                <button type="button" class="opt-btn" data-bt-session="ny">New York</button>
+              </div>
+            </div>
+            <span class="bt-label" style="margin-top:10px;display:block;">Indicadores y filtros</span>
+            <div class="bt-list bt-grid-filters" id="btFilterList">
               <div class="bt-row" data-filter="vwap">
                 <div class="bt-row-info"><span class="bt-row-name">VWAP</span><span class="bt-row-desc">Precio medio de referencia (ancla del día)</span></div>
                 <div style="display:flex;align-items:center;gap:6px;">
@@ -2445,6 +2455,9 @@ async function runBacktest() {
   const avgWin = wins > 0 ? grossProfit / wins : 0;
   const avgLoss = losses > 0 ? grossLoss / losses : 0;
   const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : (grossProfit > 0 ? Infinity : 0);
+  const avgWinPct = wins > 0 ? (avgWin / wallet) * 100 : 0;
+  const avgLossPct = losses > 0 ? (avgLoss / wallet) * 100 : 0;
+  const avgEntryPctEquity = trades > 0 ? (riskPct * trades) / trades : riskPct;
 
   document.getElementById('btResTrades').textContent = trades;
   document.getElementById('btResWinRate').textContent = winRate.toFixed(1) + '%';
@@ -2460,8 +2473,11 @@ async function runBacktest() {
   toggleBtn.disabled = false;
   inst.drawDrawCanvas();
 
-  renderBtWindow();
   openBtWindow();
+  requestAnimationFrame(() => {
+    renderBtWindow();
+    drawEquityCurve(globalState.btLastResults.equityCurve, globalState.btLastResults.wallet);
+  });
 
   showToast('Backtest completo', `${trades} operaciones sobre ${candles.length} velas cargadas de ${inst.asset.name}`, 'success');
 }
