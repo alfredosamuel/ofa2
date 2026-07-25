@@ -2473,9 +2473,29 @@ async function runBacktest() {
   document.getElementById('btResDD').textContent = '-' + maxDD.toFixed(2) + '%';
   document.getElementById('btResults').classList.add('show');
 
+  const avgWinPctEquity = wins > 0 ? (avgWin / wallet) * 100 : 0;
+  const avgLossPctEquity = losses > 0 ? (avgLoss / wallet) * 100 : 0;
+
+  document.getElementById('btResTrades').textContent = trades;
+  document.getElementById('btResWinRate').textContent = winRate.toFixed(1) + '%';
+  document.getElementById('btResults').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:5px;font-size:10px;margin-top:8px;">
+      <div style="display:flex;justify-content:space-between;"><span class="k" style="color:var(--muted);">Trades</span><span>${trades}</span></div>
+      <div style="display:flex;justify-content:space-between;"><span class="k" style="color:var(--muted);">Win Rate</span><span>${winRate.toFixed(1)}%</span></div>
+      <div style="display:flex;justify-content:space-between;"><span class="k" style="color:var(--muted);">Retorno Total</span><span style="color:${totalReturnPct>=0?'var(--green)':'var(--magenta)'}">${totalReturnPct>=0?'+':''}${totalReturnPct.toFixed(2)}%</span></div>
+      <div style="display:flex;justify-content:space-between;"><span class="k" style="color:var(--muted);">Máx Drawdown</span><span style="color:var(--magenta);">-${maxDD.toFixed(2)}%</span></div>
+      <div style="display:flex;justify-content:space-between;"><span class="k" style="color:var(--muted);">Entrada Prom.</span><span>${riskPct.toFixed(1)}% equity</span></div>
+      <div style="display:flex;justify-content:space-between;"><span class="k" style="color:var(--muted);">Ganancia Prom.</span><span style="color:var(--green);">+${avgWinPctEquity.toFixed(2)}%</span></div>
+      <div style="display:flex;justify-content:space-between;"><span class="k" style="color:var(--muted);">Pérdida Prom.</span><span style="color:var(--magenta);">-${avgLossPctEquity.toFixed(2)}%</span></div>
+    </div>
+  `;
+
+  document.getElementById('btResults').classList.add('show');
+
   globalState.btLastResults = {
     wallet, equity, netProfit, totalReturnPct, profitFactor, maxDD, trades, wins, losses, winRate,
-    avgWin, avgLoss, maxWin, maxLoss, maxLossStreak, equityCurve, assetName: inst.asset.name, candleCount: candles.length
+    avgWin, avgLoss, maxWin, maxLoss, maxLossStreak, equityCurve, assetName: inst.asset.name, candleCount: candles.length,
+    avgWinPctEquity, avgLossPctEquity
   };
   const toggleBtn = document.getElementById('toggleBtWindowBtn');
   toggleBtn.disabled = false;
