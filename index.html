@@ -606,8 +606,8 @@
                 <input type="number" class="field" id="btRiskPct" placeholder="0.5" value="0.5" min="0.01" max="100" step="0.1">
               </div>
               <div>
-                <span class="bt-label">Pérdida diaria máx (%)</span>
-                <input type="number" class="field" id="btMaxDailyLoss" placeholder="2" value="2" min="0.1" max="100" step="0.1">
+                <span class="bt-label">Cantidad de velas</span>
+                <input type="number" class="field" id="btCandlesCount" placeholder="0 = todas" value="0" min="0" step="1">
               </div>
             </div>
             <div class="bt-grid2">
@@ -616,8 +616,8 @@
                 <input type="number" class="field" id="btStopAtr" placeholder="1.5" value="1.5" min="0.1" max="10" step="0.1">
               </div>
               <div>
-                <span class="bt-label">Meta mensual (%)</span>
-                <input type="number" class="field" id="btMonthlyTarget" placeholder="6" value="6" min="0.1" max="1000" step="0.1">
+                <span class="bt-label">R:R deseado</span>
+                <input type="number" class="field" id="btRR" placeholder="2.0" value="2.0" min="0.1" max="100" step="0.1">
               </div>
             </div>
           </div>
@@ -627,35 +627,59 @@
             <div class="bt-list" id="btFilterList">
               <div class="bt-row" data-filter="vwap">
                 <div class="bt-row-info"><span class="bt-row-name">VWAP</span><span class="bt-row-desc">Precio medio de referencia (ancla del día)</span></div>
-                <div class="ind-toggle on" data-bt-toggle="vwap"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button type="button" class="ind-gear" data-bt-opts="vwap" title="Opciones VWAP">⚙</button>
+                  <div class="ind-toggle on" data-bt-toggle="vwap"></div>
+                </div>
               </div>
               <div class="bt-row" data-filter="vwapBands">
                 <div class="bt-row-info"><span class="bt-row-name">Bandas VWAP</span><span class="bt-row-desc">Gatillo de entrada por desviación (mean-reversion)</span></div>
-                <div class="ind-toggle on" data-bt-toggle="vwapBands"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button type="button" class="ind-gear" data-bt-opts="vwapBands" title="Opciones Bandas VWAP">⚙</button>
+                  <div class="ind-toggle on" data-bt-toggle="vwapBands"></div>
+                </div>
               </div>
               <div class="bt-row" data-filter="adx">
                 <div class="bt-row-info"><span class="bt-row-name">Filtro ADX</span><span class="bt-row-desc">Bloquea entradas si hay tendencia fuerte</span></div>
-                <div class="ind-toggle on" data-bt-toggle="adx"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button type="button" class="ind-gear" data-bt-opts="adx" title="Opciones ADX">⚙</button>
+                  <div class="ind-toggle on" data-bt-toggle="adx"></div>
+                </div>
               </div>
               <div class="bt-row" data-filter="vp">
                 <div class="bt-row-info"><span class="bt-row-name">Volume Profile</span><span class="bt-row-desc">Confirma zona de bajo volumen (LVN) antes de entrar</span></div>
-                <div class="ind-toggle on" data-bt-toggle="vp"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button type="button" class="ind-gear" data-bt-opts="vp" title="Opciones Volume Profile">⚙</button>
+                  <div class="ind-toggle on" data-bt-toggle="vp"></div>
+                </div>
               </div>
               <div class="bt-row" data-filter="sma20">
                 <div class="bt-row-info"><span class="bt-row-name">SMA 20</span><span class="bt-row-desc">Filtro de tendencia rápido (opcional)</span></div>
-                <div class="ind-toggle" data-bt-toggle="sma20"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button type="button" class="ind-gear" data-bt-opts="sma20" title="Opciones SMA 20">⚙</button>
+                  <div class="ind-toggle" data-bt-toggle="sma20"></div>
+                </div>
               </div>
               <div class="bt-row" data-filter="sma50">
                 <div class="bt-row-info"><span class="bt-row-name">SMA 50</span><span class="bt-row-desc">Filtro de tendencia lento (opcional)</span></div>
-                <div class="ind-toggle" data-bt-toggle="sma50"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button type="button" class="ind-gear" data-bt-opts="sma50" title="Opciones SMA 50">⚙</button>
+                  <div class="ind-toggle" data-bt-toggle="sma50"></div>
+                </div>
               </div>
               <div class="bt-row" data-filter="fractal">
                 <div class="bt-row-info"><span class="bt-row-name">Fractales</span><span class="bt-row-desc">Referencia de soporte/resistencia (opcional)</span></div>
-                <div class="ind-toggle" data-bt-toggle="fractal"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button type="button" class="ind-gear" data-bt-opts="fractal" title="Opciones Fractales">⚙</button>
+                  <div class="ind-toggle" data-bt-toggle="fractal"></div>
+                </div>
               </div>
               <div class="bt-row" data-filter="flow">
                 <div class="bt-row-info"><span class="bt-row-name">OrderFlow</span><span class="bt-row-desc">Confirmación de agresión compradora/vendedora (opcional)</span></div>
-                <div class="ind-toggle" data-bt-toggle="flow"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button type="button" class="ind-gear" data-bt-opts="flow" title="Opciones OrderFlow">⚙</button>
+                  <div class="ind-toggle" data-bt-toggle="flow"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -2265,10 +2289,14 @@ function runBacktest() {
 
   const wallet = parseFloat(document.getElementById('btWallet').value) || 10000;
   const riskPct = parseFloat(document.getElementById('btRiskPct').value) || 0.5;
-  const maxDailyLossPct = parseFloat(document.getElementById('btMaxDailyLoss').value) || 2;
+  const candleLimit = parseInt(document.getElementById('btCandlesCount').value, 10) || 0;
   const stopAtrMult = parseFloat(document.getElementById('btStopAtr').value) || 1.5;
+  const rrTarget = parseFloat(document.getElementById('btRR').value) || 2.0;
 
-  const candles = inst.lastCandles;
+  let candles = inst.lastCandles;
+  if (candleLimit > 0 && candleLimit < candles.length) {
+    candles = candles.slice(-candleLimit);
+  }
   inst.backtestTrades = [];
   const useVwapBands = globalState.btFilters.vwapBands;
   const useAdx = globalState.btFilters.adx;
@@ -2302,7 +2330,6 @@ function runBacktest() {
   let equity = wallet, peakEquity = wallet, maxDD = 0;
   let trades = 0, wins = 0;
   let position = null; // {dir, entry, stop, target, riskAmt, tradeId, entryTime, entryPrice, tpPrice, slPrice}
-  let dailyPnl = 0, curDayKey = null, dailyLossHit = false;
 
   // Trackers para las métricas extendidas
   const tradePnls = [];
@@ -2313,8 +2340,6 @@ function runBacktest() {
 
   for (let i = Math.max(adxPeriod*2+2, 30); i < candles.length; i++) {
     const c = candles[i];
-    const d = dayKey(c.time);
-    if (d !== curDayKey) { curDayKey = d; dailyPnl = 0; dailyLossHit = false; }
 
     // Gestión de posición abierta
     if (position) {
@@ -2334,7 +2359,7 @@ function runBacktest() {
           trade.exitPrice = exitPrice;
           trade.rr = Math.abs(trade.tpPrice - trade.entryPrice) / Math.max(Math.abs(trade.entryPrice - trade.slPrice), 0.000001);
         }
-        equity += pnl; dailyPnl += pnl;
+        equity += pnl;
         trades++; if (pnl > 0) wins++;
         peakEquity = Math.max(peakEquity, equity);
         maxDD = Math.max(maxDD, (peakEquity - equity) / peakEquity * 100);
@@ -2348,9 +2373,7 @@ function runBacktest() {
       }
     }
 
-    if (dailyPnl <= -(wallet * maxDailyLossPct / 100)) dailyLossHit = true;
-
-    if (!position && !dailyLossHit && vwapArr[i] != null && atr[i] != null) {
+    if (!position && vwapArr[i] != null && atr[i] != null) {
       const adxOk = !useAdx || (adxArr[i] != null && adxArr[i] < adxThreshold);
       const trendOk = (!useSma20 || sma20Arr[i] != null) && (!useSma50 || sma50Arr[i] != null);
       let dir = null;
