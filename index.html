@@ -1600,7 +1600,11 @@ function createChartInstance(cell, asset, interval, index) {
         data = { candles: [], vols: [] };
         for(let i=0; i<ts.length; i++){ if(q.open[i] == null) continue; const time = ts[i]; data.candles.push({ time, open: q.open[i], high: q.high[i], low: q.low[i], close: q.close[i], vol: q.volume[i] || 0 }); data.vols.push({ time, value: q.volume[i] || 0, color: q.close[i] >= q.open[i] ? 'rgba(57,255,136,.3)' : 'rgba(255,46,136,.3)' }); }
       }
-      if (data.candles.length > 0) { const range = inst.chart.timeScale().getVisibleLogicalRange(); inst.lastCandles = [...data.candles, ...inst.lastCandles]; inst.candleSeries.setData(inst.lastCandles); inst.volSeries.setData([...data.vols, ...inst.volSeries.data()]); if (range) inst.chart.timeScale().setVisibleLogicalRange({ from: range.from + data.candles.length, to: range.to + data.candles.length }); inst.updateSMA(); inst.calcVWAP(true); inst.updateFractals(); inst.updateVpFractal(); inst.updateADX(); }
+      if (data.candles.length > 0) { const range = inst.chart.timeScale().getVisibleLogicalRange(); inst.lastCandles = [...data.candles, ...inst.lastCandles]; inst.candleSeries.setData(inst.lastCandles); inst.volSeries.setData([...data.vols, ...inst.volSeries.data()]); if (range) inst.chart.timeScale().setVisibleLogicalRange({ from: range.from + data.candles.length, to: range.to + data.candles.length }); inst.updateSMA(); inst.calcVWAP(true); inst.updateFractals(); inst.updateVpFractal(); inst.updateADX();
+        if (!inst._btLoading && globalState.btLastResults) {
+          runBacktest();
+        }
+      }
       else { inst.noMoreHistory = true; }
     } catch(e) { console.error(e); inst.noMoreHistory = true; } finally { inst.isLoadingHistory = false; }
   };
@@ -2283,7 +2287,7 @@ function computeATR(candles, period) {
   return out;
 }
 
-function runBacktest() {
+async function runBacktest() {
   const inst = globalState.instances[0];
   if(!inst || !inst.lastCandles || inst.lastCandles.length < 60) { showToast('Backtest', 'No hay suficiente historial cargado en el gráfico activo.', 'error'); return; }
 
@@ -2293,6 +2297,17 @@ function runBacktest() {
   const candleLimit = rawVal === '' ? 0 : Math.max(0, parseInt(rawVal, 10) || 0);
   const stopAtrMult = parseFloat(document.getElementById('btStopAtr').value) || 1.5;
   const rrTarget = parseFloat(document.getElementById('btRR').value) || 2.0;
+
+  // Auto-load more history if needed
+  if (candleLimit > 0 && candleLimit > inst.lastCandles.length && !inst.noMoreHistory) {
+    showToast('Backtest', `Descargando ${candleLimit} velas...`, 'alarm');
+    inst._btLoading = true;
+    while (inst.lastCandles.length < candleLimit && !inst.noMoreHistory) {
+      await inst.loadMoreHistory();
+    }
+    inst._btLoading = false;
+    showToast('Backtest', `Velas cargadas: ${inst.lastCandles.length}. Ejecutando backtest...`, 'success');
+  }
 
   let candles = inst.lastCandles;
   if (candleLimit > 0 && candleLimit < candles.length) {
