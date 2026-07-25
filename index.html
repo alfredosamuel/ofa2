@@ -2401,7 +2401,7 @@ function runBacktest() {
         const stopDist = atr[i] * stopAtrMult;
         const entry = c.close;
         const stop = dir === 'long' ? entry - stopDist : entry + stopDist;
-        const target = vwapArr[i];
+        const target = dir === 'long' ? entry + stopDist * rrTarget : entry - stopDist * rrTarget;
         const riskAmt = equity * (riskPct / 100);
         const qty = riskAmt / stopDist;
         const tradeId = `bt_${Date.now()}_${trades + 1}`;
