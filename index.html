@@ -993,6 +993,14 @@ function initApp() {
     });
   });
   document.getElementById('runBacktestBtn').addEventListener('click', runBacktest);
+
+  // Session filter buttons
+  document.querySelectorAll('#btSessionGroup .opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#btSessionGroup .opt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
   document.getElementById('clearBacktestOpsBtn').addEventListener('click', () => {
     const inst = globalState.instances[globalState.activeChartIndex];
     if (!inst) return;
