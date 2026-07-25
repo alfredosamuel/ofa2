@@ -356,9 +356,9 @@
 
   <div class="toolbar">
     <div class="layout-group" id="layoutGroup">
-      <button type="button" class="layout-btn" data-layout="1">1</button>
+      <button type="button" class="layout-btn active" data-layout="1">1</button>
       <button type="button" class="layout-btn" data-layout="2">2</button>
-      <button type="button" class="layout-btn active" data-layout="4">4</button>
+      <button type="button" class="layout-btn" data-layout="4">4</button>
     </div>
     <div class="tf-group" id="tfGroup">
       <button type="button" class="tf-pill" data-tf="1m">1m</button>
@@ -1075,7 +1075,7 @@ function initApp() {
 
   setInterval(() => { document.getElementById('footerClock').textContent = new Date().toLocaleTimeString('es-CL', { timeZone: TZ, hour12: false }); }, 1000);
   populateDropdown();
-  setLayout(4);
+  setLayout(1);
 }
 
 function setTool(tool) {
@@ -2284,26 +2284,19 @@ function computeATR(candles, period) {
 }
 
 function runBacktest() {
-  const inst = globalState.instances[globalState.activeChartIndex];
+  const inst = globalState.instances[0];
   if(!inst || !inst.lastCandles || inst.lastCandles.length < 60) { showToast('Backtest', 'No hay suficiente historial cargado en el gráfico activo.', 'error'); return; }
 
   const wallet = parseFloat(document.getElementById('btWallet').value) || 10000;
   const riskPct = parseFloat(document.getElementById('btRiskPct').value) || 0.5;
-  const candleLimit = parseInt(document.getElementById('btCandlesCount').value, 10) || 0;
+  const rawVal = document.getElementById('btCandlesCount').value.trim();
+  const candleLimit = rawVal === '' ? 0 : Math.max(0, parseInt(rawVal, 10) || 0);
   const stopAtrMult = parseFloat(document.getElementById('btStopAtr').value) || 1.5;
   const rrTarget = parseFloat(document.getElementById('btRR').value) || 2.0;
 
   let candles = inst.lastCandles;
-  if (candleLimit === 0) {
-    const visibleRange = inst.chart.timeScale().getVisibleRange();
-    if (visibleRange && visibleRange.from && visibleRange.to) {
-      candles = inst.lastCandles.filter(c => c.time >= visibleRange.from && c.time <= visibleRange.to);
-    }
-    if (candles.length < 60) candles = inst.lastCandles;
-  } else {
-    if (candleLimit > 0 && candleLimit < candles.length) {
-      candles = candles.slice(-candleLimit);
-    }
+  if (candleLimit > 0 && candleLimit < candles.length) {
+    candles = candles.slice(-candleLimit);
   }
   inst.backtestTrades = [];
   const useVwapBands = globalState.btFilters.vwapBands;
