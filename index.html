@@ -2339,6 +2339,22 @@ async function runBacktest() {
   if (candleLimit > 0 && candleLimit < candles.length) {
     candles = candles.slice(-candleLimit);
   }
+
+  // Session filter
+  const sessionBtn = document.querySelector('#btSessionGroup .opt-btn.active');
+  const session = sessionBtn ? sessionBtn.dataset.btSession : 'all';
+  if (session !== 'all') {
+    const ranges = { asia: [0,9], london: [7,16], ny: [12,21] };
+    const [hFrom, hTo] = ranges[session] || [0,24];
+    candles = candles.filter(c => {
+      const h = new Date(c.time * 1000).getUTCHours();
+      return h >= hFrom && h < hTo;
+    });
+    if (candles.length < 30) {
+      showToast('Backtest', `Sesión ${session}: muy pocas velas (${candles.length}). Sin filtrar.`, 'error');
+      candles = inst.lastCandles;
+    }
+  }
   inst.backtestTrades = [];
   const useVwapBands = globalState.btFilters.vwapBands;
   const useAdx = globalState.btFilters.adx;
