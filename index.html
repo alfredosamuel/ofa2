@@ -2300,10 +2300,18 @@ async function runBacktest() {
 
   // Auto-load more history if needed
   if (candleLimit > 0 && candleLimit > inst.lastCandles.length && !inst.noMoreHistory) {
-    showToast('Backtest', `Descargando ${candleLimit} velas...`, 'alarm');
+    showToast('Backtest', `Descargando ${candleLimit} velas (${inst.lastCandles.length} cargadas)...`, 'alarm');
     inst._btLoading = true;
-    while (inst.lastCandles.length < candleLimit && !inst.noMoreHistory) {
-      await inst.loadMoreHistory();
+    let failCount = 0;
+    while (inst.lastCandles.length < candleLimit && !inst.noMoreHistory && failCount < 3) {
+      try {
+        await inst.loadMoreHistory();
+        failCount = 0;
+      } catch(e) {
+        failCount++;
+        console.error('Error cargando historial:', e);
+      }
+      await new Promise(r => setTimeout(r, 600));
     }
     inst._btLoading = false;
     showToast('Backtest', `Velas cargadas: ${inst.lastCandles.length}. Ejecutando backtest...`, 'success');
