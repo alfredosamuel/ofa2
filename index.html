@@ -185,7 +185,7 @@
   .bt-grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
   .bt-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:block;}
   .bt-list{display:flex;flex-direction:column;gap:4px;margin-top:4px;}
-  .bt-list.bt-grid-filters{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+  .bt-list.bt-grid-filters{display:grid;grid-template-columns:1fr;gap:4px;margin-top:6px;}
   .bt-row{display:flex;align-items:center;justify-content:space-between;padding:5px 7px;background:var(--panel-2);border:1px solid var(--border);border-radius:5px;}
   .bt-row-info{display:flex;flex-direction:column;gap:1px;}
   .bt-row-name{font-size:10px;font-weight:700;}
@@ -993,6 +993,22 @@ function initApp() {
     });
   });
   document.getElementById('runBacktestBtn').addEventListener('click', runBacktest);
+
+  // Gears for backtest filter options (data-bt-opts)
+  document.querySelectorAll('#btFilterList .ind-gear').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const key = btn.dataset.btOpts;
+      if (key) {
+        const panel = document.getElementById('opts-bt-' + key);
+        if (panel) {
+          const wasOpen = panel.classList.contains('open');
+          document.querySelectorAll('#btFilterList .ind-options').forEach(p => p.classList.remove('open'));
+          if (!wasOpen) panel.classList.add('open');
+        }
+      }
+    });
+  });
 
   // Session filter buttons
   document.querySelectorAll('#btSessionGroup .opt-btn').forEach(btn => {
@@ -2316,8 +2332,8 @@ async function runBacktest() {
   const stopAtrMult = parseFloat(document.getElementById('btStopAtr').value) || 1.5;
   const rrTarget = parseFloat(document.getElementById('btRR').value) || 2.0;
 
-  // Auto-load more history if needed
-  if (candleLimit > 0 && candleLimit > inst.lastCandles.length && !inst.noMoreHistory) {
+  // Auto-load more history if needed (skip if triggered by scroll/auto)
+  if (!inst._btAutoRunning && candleLimit > 0 && candleLimit > inst.lastCandles.length && !inst.noMoreHistory) {
     showToast('Backtest', `Descargando ${candleLimit} velas (${inst.lastCandles.length} cargadas)...`, 'alarm');
     inst._btLoading = true;
     let failCount = 0;
